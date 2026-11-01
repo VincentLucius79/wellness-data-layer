@@ -1,0 +1,86 @@
+#  wellness-data-layer configuration
+#  Copy to config.toml and edit. config.toml is gitignored.
+#
+#  NOTHING SECRET NEEDS TO GO IN THIS FILE. See the [withings] section.
+
+[paths]
+# The single file the agent is allowed to read.
+wellness_db       = "~/HealthData/wellness.db"
+# Where GarminDB keeps its own SQLite files. We only ever read these.
+garmin_db_dir     = "~/HealthData/DBs"
+# Where you run toneget / drop its exports.
+tonal_export_dir  = "~/HealthData/tonal_exports"
+# Raw source payloads are archived here forever and never deleted.
+archive_dir       = "~/HealthData/raw"
+# Withings OAuth tokens (written 0600). These ARE secrets - the refresh token
+# is good for a year - so keep them under a path you treat as secret.
+withings_token    = "~/.secrets/withings_token.json"
+# The generated dashboard page. Serve THIS directory, never ~/HealthData
+# itself, which holds the databases and the raw exports.
+dashboard_dir     = "~/HealthData/dashboard"
+
+[local]
+timezone = "America/Chicago"
+
+[display]
+# What the dashboard shows masses in: "imperial" (lb) or "metric" (kg).
+# Every mass on the page follows this one setting - body weight, fat, fat-free,
+# muscle and bone mass, segmental figures and Tonal volume - so no panel mixes
+# the two. Display only: wellness.db keeps each source's own units (Withings
+# kg, Tonal lb, Garmin weight_lb) and is never converted.
+units = "imperial"
+
+# ----------------------------------------------------------------- tonal
+[tonal]
+# Tonal history is append-only. If an export is missing workouts already in
+# the DB, it is truncated: reject the whole export rather than upsert part of
+# it. This is the guard against toneget silently skipping a failed page.
+reject_on_missing_workouts = true
+# Refuse an export whose workout count dropped at all versus the last
+# accepted one.
+reject_on_count_drop = true
+# Warn (don't reject) on a gap longer than this inside otherwise dense history.
+gap_warn_days = 21
+# Warn (ok_warn, never reject) when the newest workout is older than this.
+# Lifting is intermittent, so this is looser than the daily sources.
+stale_after_days = 14
+
+# ----------------------------------------------------------------- garmin
+[garmin]
+# Searched in this order. Missing files are skipped without error.
+db_files = [
+  "garmin.db",
+  "garmin_monitoring.db",
+  "garmin_summary.db",
+  "summary.db",
+  "garmin_activities.db",
+]
+# Warn when the newest garmin_daily day is older than this. A GarminDB
+# download that stops still loads "successfully" - this is what catches it.
+stale_after_days = 2
+
+# --------------------------------------------------------------- withings
+[withings]
+# LEAVE THESE EMPTY and export them in your shell instead:
+#
+#   export WITHINGS_CLIENT_ID="$(pass show withings/client_id)"
+#   export WITHINGS_CLIENT_SECRET="$(pass show withings/client_secret)"
+#
+# The environment always wins over anything written here, so the credentials
+# live only in your password store and never land in a file that gets read,
+# reviewed, copied or pasted. Filling them in below also works, but then the
+# secrets sit in plaintext on disk.
+client_id     = ""
+client_secret = ""
+# Must match the callback registered with your Withings app exactly.
+redirect_uri  = "https://localhost/withings/callback"
+# Pull everything on first run; later runs use the stored lastupdate cursor.
+initial_start_date = "2009-01-01"
+# Abort the run if a getmeas page fails, instead of continuing with a hole.
+strict_pagination = true
+# Record measurement types we don't have a name for, rather than dropping them.
+# BodyScan exposes metrics the public docs describe only loosely, so discovery
+# is how you find out what your account actually returns.
+capture_unknown_meastypes = true
+# Warn when the newest real measurement is older than this.
+stale_after_days = 2

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Runs scripts/leakcheck.sh on what is about to be committed. Not active until
+# you opt in, once per clone:
+#
+#   git config core.hooksPath .githooks
+#
+# It checks the index, not the working tree. A hit stops the commit; read it
+# and fix it. `git commit --no-verify` skips the check for one commit.
+# The slower full-history pass (--history) is for before a push or a release.
+exec "$(git rev-parse --show-toplevel)/scripts/leakcheck.sh"

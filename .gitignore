@@ -1,0 +1,68 @@
+# Anything here that matches a pattern below is personal data or a secret and
+# must never be committed. scripts/leakcheck.sh checks the same categories in
+# what is staged and in history; keep the two in step.
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Local configuration and secrets
+config.toml
+.env
+*.env
+.secrets/
+*token*.json
+*credentials.json
+*secret*.json
+# The leak check's list of personal strings: names, paths, ids. Never public.
+.leakcheck-terms
+
+# Databases: wellness.db, its snapshot, GarminDB's files, any backup copy
+# (wellness.pre-*.db), and every SQLite journal, WAL and shared-memory file.
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+*.sqlite-*
+*-journal
+*-wal
+*-shm
+
+# Logs and run records: sync.log, garmindb.log, sleep_catchup.jsonl
+*.log
+*.jsonl
+*.ndjson
+
+# Backups
+*.bak
+*.orig
+
+# Source data. The data directory (default ~/HealthData) belongs outside
+# the repo, but if it, or any part of it, ever ends up inside, none of it is
+# tracked: Tonal exports, archived raw payloads, GarminDB's downloads.
+HealthData/
+tonal_exports/
+tonal_workouts_*.json*
+raw/
+DBs/
+FitFiles/
+*.fit
+*.tcx
+*.gpx
+*.zip
+*.gz
+
+# The generated dashboard: an index.html with every reading embedded as JSON.
+# The template it is built from is wellness/dashboard.html, which is tracked.
+dashboard/
+index.html
+
+# JSON is data. The movement catalog is downloaded by `sync_all.py
+# fetch-catalog`, never committed: it is someone else's dump of Tonal's own
+# text (see reference/README.md).
+*.json
+
+# The demo's generated dataset and page (`sync_all.py demo`): invented, but
+# treated like real data all the same.
+demo/

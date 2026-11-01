@@ -1,0 +1,61 @@
+# Names for Tonal movement ids that reference/tonal-movements.json lacks.
+#
+# One table per movement id. `name` is required. Every other key is optional,
+# and an unset key stays unknown (NULL):
+#   short_name     = "..."
+#   muscle_groups  = ["Chest", "Triceps"]
+#   body_region    = "Upper" | "Lower" | "Core" | ...
+#   is_two_sided   = true    # one row per side in tonal_set
+#   is_alternating = false
+#   arms_together  = true    # both arms pull at once, so weights are per arm
+#   on_machine     = true
+#   skill_level    = 1
+#   accessory      = "Handles" | "StraightBar" | "Rope"
+#
+# Set arms_together whenever you can: the dashboard's Tonal tab doubles the
+# weight only where it is true, and plots it undoubled while it is unknown.
+#
+# An entry for an id the catalog does have replaces the catalog's values with
+# the ones given here. Applied on the next `sync_all.py tonal` run.
+#
+# The entries below are movements Tonal offers that the catalog predates.
+# is_two_sided and arms_together were read from exported sets, not from
+# Tonal:
+# - is_two_sided: whether the movement's sets have a side 1, the same test
+#   the loader runs against the catalog.
+# - arms_together: whether volume / (avg weight x reps) is about 2 rather
+#   than about 1. That ratio agreed with the catalog's
+#   trainerArmsPulledAtSameTime on every catalog movement it was tried on.
+
+["105426d1-d502-4a20-9406-a9374662c3f0"]
+name = "Barbell Back Squat"
+is_two_sided = false
+arms_together = true
+
+["61ff8f2b-f821-4078-a36f-67e540c8b694"]
+name = "Standing Leg Extension"
+is_two_sided = true
+arms_together = false
+
+["029ea28e-328b-422e-a410-f1a8fc39c324"]
+name = "Standing Donkey Kick"
+is_two_sided = true
+arms_together = false
+
+["1412cb4d-c8b1-4aa3-bc66-3cfe2d5f5ba7"]
+name = "Seated Cable Crunch"
+is_two_sided = false
+arms_together = false
+
+["52f0a534-f53b-46bf-a65f-8c0e19b316f2"]
+name = "Seated Oblique Cable Crunch"
+is_two_sided = false
+arms_together = false
+
+# To name one more, add a table like this (`sync_all.py status` lists the
+# ids still without a name):
+#
+# ["00000000-0000-4000-8000-000000000000"]
+# name = "Your name for it"
+# is_two_sided = true
+# arms_together = false
